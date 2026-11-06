@@ -1,0 +1,1419 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="monetag" content="ef1e0b36630ecdee8ddf899f202558e5">
+  <script>(function(s){s.dataset.zone='12186510',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <script src="https://5gvci.com/act/files/tag.min.js?z=12186630" data-cfasync="false" async></script>
+  <script>(function(s){s.dataset.zone='12186511',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    try {
+      if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+      }
+    } catch (e) { console.error("Telegram init error:", e); }
+  </script>
+  <script src='https://libtl.com/sdk.js' data-zone='12203401' data-sdk='show_12203401'></script>
+  <meta name="theme-color" content="#0b1020">
+  <title>Giveaway System</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg:#0b1020;
+      --panel:#141d33;
+      --panel2:#1c2945;
+      --text:#f5f7ff;
+      --muted:#9ba9c4;
+      --accent:#6c8cff;
+      --green:#20c997;
+      --red:#ff647c;
+      --border:#293653;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    header {
+      padding:18px 20px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    header h1 { margin:0; font-size:22px; }
+
+    .container {
+      max-width:1100px;
+      margin:auto;
+      padding:20px;
+    }
+
+    .tabs {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    }
+
+    button {
+      border:0;
+      border-radius:9px;
+      padding:12px 16px;
+      background:var(--panel2);
+      color:white;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    button.primary { background:var(--accent); }
+    button.success { background:#137e63; }
+    button.danger { background:#8d3047; }
+
+    button:disabled {
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    .tab.active { background:var(--accent); }
+
+    .panel {
+      background:var(--panel);
+      border:1px solid var(--border);
+      padding:20px;
+      border-radius:14px;
+      margin-bottom:18px;
+    }
+
+    .panel h2 { margin-top:0; }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:14px;
+    }
+
+    label {
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      margin-top:10px;
+    }
+
+    input,textarea {
+      width:100%;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#0c1427;
+      color:white;
+      margin:7px 0 12px;
+      font:inherit;
+    }
+
+    textarea { resize:vertical; }
+
+    .muted { color:var(--muted); }
+
+    .status {
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:20px;
+      background:#263657;
+      font-size:12px;
+    }
+
+    .open { background:#145b49; }
+    .closed { background:#653044; }
+
+    .hidden { display:none !important; }
+
+    .table-wrap { overflow-x:auto; }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      min-width:550px;
+    }
+
+    th,td {
+      padding:12px 9px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      font-size:14px;
+    }
+
+    th { color:var(--muted); }
+
+    .winner {
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      margin:10px 0;
+      background:var(--panel2);
+    }
+
+    .chat-box {
+      height:300px;
+      overflow-y:auto;
+      background:#0c1427;
+      border-radius:9px;
+      padding:12px;
+      margin-bottom:12px;
+    }
+
+    .chat-message {
+      padding:10px 5px;
+      border-bottom:1px solid var(--border);
+      overflow-wrap:anywhere;
+    }
+
+    .chat-message strong { color:#9db3ff; }
+
+    .notice {
+      padding:12px;
+      border-radius:9px;
+      background:#263657;
+      margin:12px 0;
+    }
+
+    #toast {
+      position:fixed;
+      bottom:20px;
+      left:50%;
+      transform:translateX(-50%);
+      padding:13px 18px;
+      background:#253452;
+      border:1px solid var(--border);
+      border-radius:10px;
+      display:none;
+      z-index:100;
+      max-width:90%;
+      text-align:center;
+    }
+
+    footer {
+      text-align:center;
+      padding:25px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🎁 Giveaway System</h1>
+  <span id="connection" class="status">Connecting...</span>
+</header>
+
+<main class="container">
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="home">Giveaway</button>
+    <button class="tab" data-tab="participants">Participants</button>
+    <button class="tab" data-tab="winners">Winners</button>
+    <button class="tab" data-tab="chat">Giveaway Chat</button>
+    <button class="tab" data-tab="admin">Admin Panel</button>
+  </nav>
+
+  <!-- GIVEAWAY -->
+  <section id="home" class="tab-content">
+
+    <div class="panel">
+      <h2 id="eventTitle">Loading giveaway...</h2>
+      <p class="muted">Current giveaway schedule</p>
+
+      <div class="grid">
+        <div>
+          <label>Start Date</label>
+          <p id="startDate">-</p>
+        </div>
+
+        <div>
+          <label>End Date</label>
+          <p id="endDate">-</p>
+        </div>
+
+        <div>
+          <label>Winner Limit</label>
+          <p id="winnerLimit">-</p>
+        </div>
+
+        <div>
+          <label>Giveaway Status</label>
+          <p id="eventStatus">-</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Register for Giveaway</h2>
+      <p class="muted">
+        Enter your Player Name and Player ID to participate.
+      </p>
+
+      <label>Player Name</label>
+      <input id="playerName" maxlength="40"
+             placeholder="Enter your name">
+
+      <label>Player ID</label>
+      <input id="playerId" maxlength="60"
+             placeholder="Enter your Player ID">
+
+      <button class="primary" id="registerBtn">
+        Register Now
+      </button>
+
+      <p id="registrationStatus" class="muted"></p>
+    </div>
+
+  </section>
+
+  <!-- PARTICIPANTS -->
+  <section id="participants" class="tab-content hidden">
+
+    <div class="panel">
+      <h2>Participants List</h2>
+
+      <p class="muted">
+        Showing participants for:
+        <strong id="participantsEventTitle">No active event</strong>
+      </p>
+
+      <p>
+        Total Participants:
+        <strong id="participantCount">0</strong>
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Player Name</th>
+              <th>Player ID</th>
+              <th>Registered At</th>
+            </tr>
+          </thead>
+
+          <tbody id="participantRows">
+            <tr>
+              <td colspan="4">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- WINNERS -->
+  <section id="winners" class="tab-content hidden">
+
+    <div class="panel">
+      <h2>🏆 Giveaway Winners</h2>
+
+      <p class="muted">
+        Current event:
+        <strong id="winnersEventTitle">No active event</strong>
+      </p>
+
+      <div id="winnerList">
+        No winners selected yet.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CHAT -->
+  <section id="chat" class="tab-content hidden">
+
+    <div class="panel">
+      <h2>Giveaway Chat</h2>
+
+      <div id="chatBox" class="chat-box"></div>
+
+      <label>Your Name</label>
+      <input id="chatName" maxlength="40"
+             placeholder="Your name">
+
+      <label>Message</label>
+      <textarea id="chatInput" maxlength="1000" rows="3"
+                placeholder="Write a message..."></textarea>
+
+      <button class="primary" id="sendChatBtn">
+        Send Message
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ADMIN -->
+  <section id="admin" class="tab-content hidden">
+
+    <div class="panel" id="loginPanel">
+      <h2>Admin Login</h2>
+
+      <label>Email</label>
+      <input id="adminEmail" type="email"
+             placeholder="Admin email">
+
+      <label>Password</label>
+      <input id="adminPassword" type="password"
+             placeholder="Password">
+
+      <button class="primary" id="loginBtn">Login</button>
+    </div>
+
+    <div id="adminPanel" class="hidden">
+
+      <div class="panel">
+        <h2>Admin Dashboard</h2>
+        <p>
+          Logged in as:
+          <strong id="adminUser"></strong>
+        </p>
+
+        <button class="danger" id="logoutBtn">Logout</button>
+      </div>
+
+      <!-- EDIT CURRENT EVENT -->
+      <div class="panel">
+        <h2>Current Event Settings</h2>
+
+        <label>Event Title</label>
+        <input id="editTitle" maxlength="100">
+
+        <label>Start Date and Time</label>
+        <input id="editStart" type="datetime-local">
+
+        <label>End Date and Time</label>
+        <input id="editEnd" type="datetime-local">
+
+        <label>Number of Winners</label>
+        <input id="editLimit" type="number"
+               min="1" max="100" value="1">
+
+        <button class="primary" id="saveEventBtn">
+          Save Event Settings
+        </button>
+      </div>
+
+      <!-- CREATE NEW EVENT -->
+      <div class="panel">
+        <h2>Create New Event</h2>
+
+        <p class="muted">
+          A new event has its own participants and winners.
+          Previous event records will remain saved.
+        </p>
+
+        <label>New Event Title</label>
+        <input id="newTitle" maxlength="100"
+               placeholder="New Giveaway Event">
+
+        <label>Start Date and Time</label>
+        <input id="newStart" type="datetime-local">
+
+        <label>End Date and Time</label>
+        <input id="newEnd" type="datetime-local">
+
+        <label>Number of Winners</label>
+        <input id="newLimit" type="number"
+               min="1" max="100" value="1">
+
+        <button class="success" id="createEventBtn">
+          Create New Event
+        </button>
+      </div>
+
+      <!-- DRAW WINNERS -->
+      <div class="panel">
+        <h2>Random Winner Selection</h2>
+
+        <p class="muted">
+          Winners are selected only from the current event.
+        </p>
+
+        <button class="primary" id="drawBtn">
+          Pick Random Winners
+        </button>
+
+        <div id="drawResult"></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>Giveaway System</footer>
+<div id="toast"></div>
+
+<script>
+/* =====================================
+   SUPABASE CONNECTION
+===================================== */
+
+const SUPABASE_URL =
+  "https://dszfwtupuqlttnmhyiez.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_ceQb2h__QrV3rxTrOS-Q7A_cghiBPC5";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentEvent = null;
+let participants = [];
+let winners = [];
+let currentUser = null;
+let realtimeChannels = [];
+let loadingEvent = false;
+
+
+/* =====================================
+   HELPERS
+===================================== */
+
+const $ = id => document.getElementById(id);
+
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.style.display = "block";
+
+  setTimeout(() => {
+    el.style.display = "none";
+  }, 3500);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  })[char]);
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+
+  return new Date(value).toLocaleString();
+}
+
+function toLocalInput(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+  const offset = date.getTimezoneOffset() * 60000;
+
+  return new Date(date.getTime() - offset)
+    .toISOString()
+    .slice(0,16);
+}
+
+function getDateValue(id) {
+  const value = $(id).value;
+
+  if (!value) return null;
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date.toISOString();
+}
+
+function isAdmin() {
+  return currentUser?.app_metadata?.role === "admin";
+}
+
+function registrationKey() {
+  return currentEvent
+    ? "giveaway_registered_" + currentEvent.id
+    : "";
+}
+
+function eventIsOpen() {
+  if (!currentEvent ||
+      !currentEvent.start_at ||
+      !currentEvent.end_at) {
+    return false;
+  }
+
+  const now = Date.now();
+  const start = new Date(currentEvent.start_at).getTime();
+  const end = new Date(currentEvent.end_at).getTime();
+
+  return now >= start && now <= end;
+}
+
+
+/* =====================================
+   NAVIGATION
+===================================== */
+
+document.querySelectorAll(".tab").forEach(button => {
+  button.addEventListener("click", () => {
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.classList.remove("active");
+    });
+
+    document.querySelectorAll(".tab-content").forEach(section => {
+      section.classList.add("hidden");
+    });
+
+    button.classList.add("active");
+
+    $(button.dataset.tab).classList.remove("hidden");
+
+    if (button.dataset.tab === "participants") {
+      loadParticipants();
+    }
+
+    if (button.dataset.tab === "winners") {
+      loadWinners();
+    }
+
+    if (button.dataset.tab === "chat") {
+      loadChat();
+    }
+  });
+});
+
+
+/* =====================================
+   CURRENT EVENT
+===================================== */
+
+async function loadEvent() {
+
+  if (loadingEvent) return;
+
+  loadingEvent = true;
+
+  try {
+
+    const { data, error } = await db
+      .from("giveaway_events")
+      .select("*")
+      .eq("is_current", true)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    currentEvent = data || null;
+
+    if (!currentEvent) {
+
+      $("eventTitle").textContent = "No Active Giveaway";
+      $("startDate").textContent = "-";
+      $("endDate").textContent = "-";
+      $("winnerLimit").textContent = "-";
+      $("eventStatus").textContent = "No current event";
+
+      $("participantsEventTitle").textContent = "No active event";
+      $("winnersEventTitle").textContent = "No active event";
+
+      participants = [];
+      winners = [];
+
+      renderParticipants();
+      renderWinners();
+
+      $("registrationStatus").textContent =
+        "There is no active giveaway.";
+
+      $("editTitle").value = "";
+      $("editStart").value = "";
+      $("editEnd").value = "";
+      $("editLimit").value = "1";
+
+      return;
+    }
+
+    $("eventTitle").textContent = currentEvent.title;
+    $("startDate").textContent = formatDate(currentEvent.start_at);
+    $("endDate").textContent = formatDate(currentEvent.end_at);
+    $("winnerLimit").textContent = currentEvent.winner_limit;
+
+    $("participantsEventTitle").textContent = currentEvent.title;
+    $("winnersEventTitle").textContent = currentEvent.title;
+
+    const now = Date.now();
+
+    const start = currentEvent.start_at
+      ? new Date(currentEvent.start_at).getTime()
+      : Infinity;
+
+    const end = currentEvent.end_at
+      ? new Date(currentEvent.end_at).getTime()
+      : -Infinity;
+
+    let status = "Not Started";
+    let css = "status";
+
+    if (now >= start && now <= end) {
+      status = "Registration Open";
+      css = "status open";
+    } else if (now > end) {
+      status = "Ended";
+      css = "status closed";
+    }
+
+    $("eventStatus").innerHTML =
+      `<span class="${css}">${status}</span>`;
+
+    $("editTitle").value = currentEvent.title || "";
+    $("editStart").value = toLocalInput(currentEvent.start_at);
+    $("editEnd").value = toLocalInput(currentEvent.end_at);
+    $("editLimit").value = currentEvent.winner_limit || 1;
+
+    /*
+      IMPORTANT:
+      Always reload using the CURRENT event ID.
+      This prevents old event participants from
+      appearing in the current Participants List.
+    */
+
+    await loadParticipants();
+    await loadWinners();
+
+    setupRealtime();
+
+    checkRegistrationStatus();
+
+  } catch (error) {
+
+    console.error("Event loading error:", error);
+    toast("Could not load the current event.");
+
+  } finally {
+
+    loadingEvent = false;
+
+  }
+}
+
+
+/* =====================================
+   PARTICIPANTS LIST
+===================================== */
+
+async function loadParticipants() {
+
+  if (!currentEvent) {
+
+    participants = [];
+    renderParticipants();
+    return;
+  }
+
+  const eventId = currentEvent.id;
+
+  $("participantRows").innerHTML =
+    `<tr><td colspan="4">Loading participants...</td></tr>`;
+
+  const { data, error } = await db
+    .from("giveaway_participants")
+    .select("id, event_id, player_name, player_id, registered_at")
+    .eq("event_id", eventId)
+    .order("registered_at", { ascending: true });
+
+  if (error) {
+    console.error("Participant loading error:", error);
+
+    $("participantRows").innerHTML =
+      `<tr><td colspan="4">Could not load participants.</td></tr>`;
+
+    return;
+  }
+
+  /*
+    Extra client-side filter.
+    Even if unexpected rows are returned,
+    only the current event's rows are rendered.
+  */
+
+  participants = (data || []).filter(
+    player => player.event_id === eventId
+  );
+
+  renderParticipants();
+  checkRegistrationStatus();
+}
+
+function renderParticipants() {
+
+  $("participantCount").textContent = participants.length;
+
+  if (!currentEvent) {
+    $("participantsEventTitle").textContent = "No active event";
+  } else {
+    $("participantsEventTitle").textContent =
+      currentEvent.title;
+  }
+
+  if (!participants.length) {
+
+    $("participantRows").innerHTML =
+      `<tr><td colspan="4">No registered participants yet.</td></tr>`;
+
+    return;
+  }
+
+  $("participantRows").innerHTML = participants.map((player, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${escapeHTML(player.player_name)}</td>
+      <td>${escapeHTML(player.player_id)}</td>
+      <td>${escapeHTML(formatDate(player.registered_at))}</td>
+    </tr>
+  `).join("");
+}
+
+
+/* =====================================
+   REGISTRATION STATUS
+===================================== */
+
+function checkRegistrationStatus() {
+
+  if (!currentEvent) {
+    $("registrationStatus").textContent =
+      "There is no active giveaway.";
+    return;
+  }
+
+  const savedId = localStorage.getItem(registrationKey());
+
+  if (!savedId) {
+    $("registrationStatus").textContent = "";
+    return;
+  }
+
+  const found = participants.some(
+    player => player.player_id === savedId
+  );
+
+  if (found) {
+    $("registrationStatus").textContent =
+      "You are already registered for this event.";
+  } else {
+    $("registrationStatus").textContent = "";
+  }
+}
+
+
+/* =====================================
+   REGISTER PLAYER
+===================================== */
+
+$("registerBtn").addEventListener("click", async () => {
+
+  if (!currentEvent) {
+    toast("There is no active giveaway.");
+    return;
+  }
+
+  if (!eventIsOpen()) {
+    toast("Registration is currently closed.");
+    return;
+  }
+
+  const playerName = $("playerName").value.trim();
+  const playerId = $("playerId").value.trim();
+
+  if (!playerName || !playerId) {
+    toast("Please enter your name and Player ID.");
+    return;
+  }
+
+  if (playerName.length > 40 || playerId.length > 60) {
+    toast("Player Name or Player ID is too long.");
+    return;
+  }
+
+  const alreadyRegistered = participants.some(
+    player => player.player_id === playerId
+  );
+
+  if (alreadyRegistered) {
+    $("registrationStatus").textContent =
+      "You have already registered for this event.";
+
+    toast("This Player ID is already registered.");
+    return;
+  }
+
+  const eventId = currentEvent.id;
+
+  $("registerBtn").disabled = true;
+
+  try {
+
+    // Rewarded interstitial: panoorin muna ang ad bago mag-register
+    try {
+      if (!(window.Telegram && Telegram.WebApp && Telegram.WebApp.initData)) {
+        toast("Please open this app inside Telegram to register.");
+        return;
+      }
+      if (typeof show_12203401 !== "function") {
+        toast("Ad failed to load. Please try again.");
+        return;
+      }
+      await show_12203401();
+    } catch (adError) {
+      console.error("Ad error:", adError);
+      toast("Please watch the ad to register.");
+      return;
+    }
+
+    const { error } = await db
+      .from("giveaway_participants")
+      .insert({
+        event_id: eventId,
+        player_name: playerName,
+        player_id: playerId
+      });
+
+    if (error) {
+
+      if (error.code === "23505") {
+        toast("This Player ID is already registered.");
+      } else {
+        console.error(error);
+        toast("Registration failed.");
+      }
+
+      return;
+    }
+
+    localStorage.setItem(
+      "giveaway_registered_" + eventId,
+      playerId
+    );
+
+    $("playerName").value = "";
+    $("playerId").value = "";
+
+    $("registrationStatus").textContent =
+      "Registration successful!";
+
+    toast("Successfully registered!");
+
+    await loadParticipants();
+
+  } finally {
+
+    $("registerBtn").disabled = false;
+
+  }
+});
+
+
+/* =====================================
+   WINNERS
+===================================== */
+
+async function loadWinners() {
+
+  if (!currentEvent) {
+    winners = [];
+    renderWinners();
+    return;
+  }
+
+  const eventId = currentEvent.id;
+
+  const { data, error } = await db
+    .from("giveaway_winners")
+    .select("id, event_id, place, player_name, player_id, selected_at")
+        .eq("event_id", eventId)
+    .order("place", { ascending: true });
+
+  if (error) {
+    console.error("Error loading winners:", error);
+    return;
+  }
+
+  winners = (data || []).filter(
+    winner => winner.event_id === eventId
+  );
+
+  renderWinners();
+}
+
+function renderWinners() {
+  const winnerList = document.getElementById("winnerList");
+
+  if (!currentEvent) {
+    winnerList.textContent = "No active giveaway.";
+    return;
+  }
+
+  if (winners.length === 0) {
+    winnerList.textContent = "No winners selected yet.";
+    return;
+  }
+
+  winnerList.innerHTML = winners.map(winner => `
+    <div class="winner">
+      <strong>🏆 Place ${escapeHTML(winner.place)}</strong>
+      <h3>${escapeHTML(winner.player_name)}</h3>
+      <p>Player ID: ${escapeHTML(winner.player_id)}</p>
+      <small>${escapeHTML(formatDate(winner.selected_at))}</small>
+    </div>
+  `).join("");
+}
+
+async function updateAdminUI() {
+  const { data } = await db.auth.getSession();
+  currentUser = data.session?.user || null;
+
+  const admin = currentUser?.app_metadata?.role === "admin";
+
+  document.getElementById("loginPanel").classList.toggle("hidden", admin);
+  document.getElementById("adminPanel").classList.toggle("hidden", !admin);
+
+  if (admin) {
+    document.getElementById("adminUser").textContent = currentUser.email || "Admin";
+  }
+}
+
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("adminEmail").value.trim();
+  const password = document.getElementById("adminPassword").value;
+
+  if (!email || !password) {
+    return toast("Enter your email and password.");
+  }
+
+  const { error } = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    return toast("Login failed: " + error.message);
+  }
+
+  const { data } = await db.auth.getSession();
+  currentUser = data.session?.user || null;
+
+  if (currentUser?.app_metadata?.role !== "admin") {
+    await db.auth.signOut();
+    currentUser = null;
+    await updateAdminUI();
+    return toast("This account is not an admin.");
+  }
+
+  await updateAdminUI();
+  toast("Admin login successful.");
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await db.auth.signOut();
+  currentUser = null;
+  await updateAdminUI();
+  toast("Logged out.");
+});
+
+db.auth.onAuthStateChange(() => {
+  setTimeout(updateAdminUI, 0);
+});
+
+document.getElementById("saveEventBtn").addEventListener("click", async () => {
+  if (currentUser?.app_metadata?.role !== "admin") {
+    return toast("Admin access required.");
+  }
+
+  if (!currentEvent) {
+    return toast("There is no current event.");
+  }
+
+  const title = document.getElementById("editTitle").value.trim();
+  const startValue = document.getElementById("editStart").value;
+  const endValue = document.getElementById("editEnd").value;
+  const limit = Number(document.getElementById("editLimit").value);
+
+  if (!title || !startValue || !endValue) {
+    return toast("Please complete all event details.");
+  }
+
+  const start = new Date(startValue).toISOString();
+  const end = new Date(endValue).toISOString();
+
+  if (new Date(end) <= new Date(start)) {
+    return toast("End date must be after start date.");
+  }
+
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    return toast("Winner limit must be between 1 and 100.");
+  }
+
+  const { error } = await db
+    .from("giveaway_events")
+    .update({
+      title,
+      start_at: start,
+      end_at: end,
+      winner_limit: limit
+    })
+    .eq("id", currentEvent.id);
+
+  if (error) {
+    console.error(error);
+    return toast("Could not update event.");
+  }
+
+  toast("Event settings saved.");
+  await loadEvent();
+});
+
+document.getElementById("createEventBtn").addEventListener("click", async () => {
+  if (currentUser?.app_metadata?.role !== "admin") {
+    return toast("Admin access required.");
+  }
+
+  const title = document.getElementById("newTitle").value.trim();
+  const startValue = document.getElementById("newStart").value;
+  const endValue = document.getElementById("newEnd").value;
+  const limit = Number(document.getElementById("newLimit").value);
+
+  if (!title || !startValue || !endValue) {
+    return toast("Please complete all event details.");
+  }
+
+  const start = new Date(startValue).toISOString();
+  const end = new Date(endValue).toISOString();
+
+  if (new Date(end) <= new Date(start)) {
+    return toast("End date must be after start date.");
+  }
+
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    return toast("Winner limit must be between 1 and 100.");
+  }
+
+  if (!confirm("Create a new event? Previous records will remain saved.")) {
+    return;
+  }
+
+  const previousEvent = currentEvent;
+
+  try {
+    if (previousEvent) {
+      const { error } = await db
+        .from("giveaway_events")
+        .update({ is_current: false })
+        .eq("id", previousEvent.id);
+
+      if (error) throw error;
+    }
+
+    const { data, error } = await db
+      .from("giveaway_events")
+      .insert({
+        title,
+        start_at: start,
+        end_at: end,
+        winner_limit: limit,
+        is_current: true
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    currentEvent = data;
+    participants = [];
+    winners = [];
+
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newStart").value = "";
+    document.getElementById("newEnd").value = "";
+    document.getElementById("newLimit").value = "1";
+
+    await loadEvent();
+    toast("New event created successfully!");
+  } catch (error) {
+    console.error(error);
+
+    if (previousEvent) {
+      await db
+        .from("giveaway_events")
+        .update({ is_current: true })
+        .eq("id", previousEvent.id);
+    }
+
+    await loadEvent();
+    toast("Could not create new event.");
+  }
+});
+
+document.getElementById("drawBtn").addEventListener("click", async () => {
+  if (currentUser?.app_metadata?.role !== "admin") {
+    return toast("Admin access required.");
+  }
+
+  if (!currentEvent) {
+    return toast("There is no current event.");
+  }
+
+  if (!currentEvent.end_at || Date.now() < new Date(currentEvent.end_at).getTime()) {
+    return toast("The giveaway has not ended yet.");
+  }
+
+  await loadParticipants();
+  await loadWinners();
+
+  const existingWinnerIds = new Set(winners.map(w => w.player_id));
+  const eligible = participants.filter(p => !existingWinnerIds.has(p.player_id));
+
+  const remaining = Math.max(
+    0,
+    Number(currentEvent.winner_limit) - winners.length
+  );
+
+  if (remaining <= 0) {
+    return toast("Winner limit has already been reached.");
+  }
+
+  if (eligible.length === 0) {
+    return toast("No eligible participants.");
+  }
+
+  if (!confirm("Are you sure you want to pick random winners?")) {
+    return;
+  }
+
+  const count = Math.min(remaining, eligible.length);
+  const selected = [];
+
+  for (let i = 0; i < count; i++) {
+    const index = Math.floor(Math.random() * eligible.length);
+    selected.push(eligible.splice(index, 1)[0]);
+  }
+
+  document.getElementById("drawBtn").disabled = true;
+
+  try {
+    let place = winners.reduce(
+      (max, w) => Math.max(max, Number(w.place) || 0),
+      0
+    ) + 1;
+
+    for (const player of selected) {
+      const { error } = await db
+        .from("giveaway_winners")
+        .insert({
+          event_id: currentEvent.id,
+          place,
+          player_name: player.player_name,
+          player_id: player.player_id
+        });
+
+      if (error) throw error;
+      place++;
+    }
+
+    document.getElementById("drawResult").innerHTML = selected.map(player => `
+      <div class="winner">
+        🏆 <strong>${escapeHTML(player.player_name)}</strong>
+        <p>Player ID: ${escapeHTML(player.player_id)}</p>
+      </div>
+    `).join("");
+
+    await loadWinners();
+    toast("Winner selection completed!");
+
+  } catch (error) {
+    console.error(error);
+    toast("Could not save all winners.");
+    await loadWinners();
+
+  } finally {
+    document.getElementById("drawBtn").disabled = false;
+  }
+});
+
+async function loadChat() {
+  const { data, error } = await db
+    .from("chat_messages")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    console.error("Chat error:", error);
+    return;
+  }
+
+  renderChat((data || []).reverse());
+}
+
+function renderChat(messages) {
+  const chatBox = document.getElementById("chatBox");
+  chatBox.replaceChildren();
+
+  messages.forEach(message => {
+    const item = document.createElement("div");
+    item.className = "chat-message";
+
+    const name = document.createElement("strong");
+    name.textContent = message.player_name + ": ";
+
+    const content = document.createElement("span");
+    content.textContent = message.message;
+
+    const date = document.createElement("small");
+    date.className = "muted";
+    date.textContent = " " + formatDate(message.created_at);
+
+    item.append(name, content, date);
+    chatBox.appendChild(item);
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+document.getElementById("sendChatBtn").addEventListener("click", async () => {
+  const name = document.getElementById("chatName").value.trim();
+  const message = document.getElementById("chatInput").value.trim();
+
+  if (!name || !message) {
+    return toast("Enter your name and message.");
+  }
+
+  if (name.length > 40 || message.length > 1000) {
+    return toast("Your message is too long.");
+  }
+
+  const button = document.getElementById("sendChatBtn");
+  button.disabled = true;
+
+  try {
+    const { error } = await db
+      .from("chat_messages")
+      .insert({
+        player_name: name,
+        message
+      });
+
+    if (error) throw error;
+
+    document.getElementById("chatInput").value = "";
+    await loadChat();
+
+  } catch (error) {
+    console.error(error);
+    toast("Message could not be sent.");
+
+  } finally {
+    button.disabled = false;
+  }
+});
+
+function removeRealtimeChannels() {
+  realtimeChannels.forEach(channel => db.removeChannel(channel));
+  realtimeChannels = [];
+}
+
+function setupRealtime() {
+  removeRealtimeChannels();
+
+  if (currentEvent) {
+    const eventId = currentEvent.id;
+
+    realtimeChannels.push(
+      db.channel("participants-" + eventId)
+        .on("postgres_changes", {
+          event: "*",
+          schema: "public",
+          table: "giveaway_participants",
+          filter: "event_id=eq." + eventId
+        }, () => loadParticipants())
+        .subscribe(),
+
+      db.channel("winners-" + eventId)
+        .on("postgres_changes", {
+          event: "*",
+          schema: "public",
+          table: "giveaway_winners",
+          filter: "event_id=eq." + eventId
+        }, () => loadWinners())
+        .subscribe()
+    );
+  }
+
+  realtimeChannels.push(
+    db.channel("giveaway-events")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "giveaway_events"
+      }, () => setTimeout(loadEvent, 500))
+      .subscribe(),
+
+    db.channel("giveaway-chat")
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "chat_messages"
+      }, () => loadChat())
+      .subscribe()
+  );
+}
+
+async function initialize() {
+  try {
+    const { error } = await db
+      .from("giveaway_events")
+      .select("id")
+      .limit(1);
+
+    if (error) throw error;
+
+    document.getElementById("connection").textContent = "Connected";
+    document.getElementById("connection").className = "status open";
+
+    await updateAdminUI();
+    await loadEvent();
+    await loadChat();
+
+  } catch (error) {
+    console.error("Initialization error:", error);
+
+    document.getElementById("connection").textContent = "Connection Error";
+    document.getElementById("connection").className = "status closed";
+
+    toast("Could not connect to Supabase. Check your URL, key, and RLS policies.");
+  }
+}
+
+initialize();
+</script>
+</body>
+</html>
