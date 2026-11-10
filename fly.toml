@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for mygavebot on 2026-11-08T11:46:30Z
+# fly.toml app configuration file generated for tetris-game-s613xa on 2026-11-10T22:23:50Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'mygavebot'
-primary_region = 'nrt'
+app = 'tetris-game-s613xa'
+primary_region = 'ams'
 
 [build]
 [http_service]
